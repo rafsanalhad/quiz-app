@@ -2,26 +2,34 @@ import { useState, useEffect } from 'react';
 import './App.css';
 import Navbar from './components/Navbar';
 import QuizAnswer from './components/QuizAnswer';
-import { useSelector, useDispatch } from "react-redux";
-import { RootState, AppDispatch } from "./Redux/store";
+import { useSelector } from "react-redux";
+import { RootState } from "./Redux/store";
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content';
 function App() {
   const [quiz, setQuiz] = useState<Array<{ question: string, incorrect_answers:string, correct_answer:string }>>([]);
   const [notLoading, setNotLoading] = useState(false);
   const counter = useSelector((state: RootState) => state.counter);
-  const [timer, setTimer] = useState(2);
+  const [timer, setTimer] = useState(120);
   const nilai = useSelector((state: RootState) => state.nilai);
   // const dispatch: AppDispatch = useDispatch();
   const [localCounter, setLocalCounter] = useState(counter);
   const showSwal = () => {
     withReactContent(Swal).fire({
       title: "Waktu Habis!",
-      text: "Nilai Anda Adalah " + nilai,
-    }).then(() => {
-      window.location.href = '/';
+      text: "Nilai Anda Adalah " + nilai + " Apakah Anda Ingin Quiz Lagi?",
+      showDenyButton: true,
+  confirmButtonText: "Ya",
+  denyButtonText: `Keluar`
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = '/test';
+      } else if (result.isDenied) {
+        window.location.href = '/';
+      }
     })
   }
+ 
   useEffect(() => {
     const interval = setInterval(() => {
  
