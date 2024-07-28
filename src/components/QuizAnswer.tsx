@@ -16,10 +16,10 @@ const QuizAnswer = ({ incorrect, correct }: QuizAnswerProps) => {
     answers.push(incorrectArray[i]);
   }
   answers.push(correct);
-  for (let i = answers.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [answers[i], answers[j]] = [answers[j], answers[i]];
-  }
+  // for (let i = answers.length - 1; i > 0; i--) {
+  //   const j = Math.floor(Math.random() * (i + 1));
+  //   [answers[i], answers[j]] = [answers[j], answers[i]];
+  // }
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     let data = e.currentTarget.textContent;
     console.log(data);

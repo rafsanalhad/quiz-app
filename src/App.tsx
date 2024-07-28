@@ -4,13 +4,36 @@ import Navbar from './components/Navbar';
 import QuizAnswer from './components/QuizAnswer';
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "./Redux/store";
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content';
 function App() {
   const [quiz, setQuiz] = useState<Array<{ question: string, incorrect_answers:string, correct_answer:string }>>([]);
   const [notLoading, setNotLoading] = useState(false);
   const counter = useSelector((state: RootState) => state.counter);
+  const [timer, setTimer] = useState(2);
   const nilai = useSelector((state: RootState) => state.nilai);
   // const dispatch: AppDispatch = useDispatch();
   const [localCounter, setLocalCounter] = useState(counter);
+  const showSwal = () => {
+    withReactContent(Swal).fire({
+      title: "Waktu Habis!",
+      text: "Nilai Anda Adalah " + nilai,
+    }).then(() => {
+      window.location.href = '/';
+    })
+  }
+  useEffect(() => {
+    const interval = setInterval(() => {
+ 
+      if(timer === 0) {
+        showSwal();
+        clearInterval(interval);
+      }else{
+        setTimer(timer => timer - 1);
+      }
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [timer, localCounter]);
   const getApi = async () => {
     try {
       const response = await fetch('https://opentdb.com/api.php?amount=10&category=31&difficulty=easy&type=multiple');
@@ -30,9 +53,6 @@ function App() {
     getApi();
   }, [quiz]);
 
-  useEffect(() => {
-    setLocalCounter(counter);
-  }, [counter]);
 
   function decodeHtmlEntities(text: string): string {
     const textarea = document.createElement('textarea');
@@ -44,6 +64,7 @@ function App() {
     <div className="">
       <Navbar />
       <div className="w-full">
+        <div className="text-end">{timer}</div>
       {notLoading ? ( counter < quiz.length ? (
         <div className="flex flex-row justify-center w-full">
         
