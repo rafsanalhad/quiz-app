@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useEffect, useState} from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "../Redux/store";
 interface QuizAnswerProps {
@@ -6,29 +6,29 @@ interface QuizAnswerProps {
   correct: string;
 }
 const QuizAnswer = ({ incorrect, correct }: QuizAnswerProps) => {
-  const [checkBetul, setCheckBetul] = React.useState("belum dijawab");
-  const [nilai, setNilai] = React.useState(0);
   const incorrectArray = incorrect.split(",");
   const counter = useSelector((state: RootState) => state.counter);
   const dispatch: AppDispatch = useDispatch();
-  const answers = [];
-  for (let i = 0; i < incorrectArray.length; i++) {
-    answers.push(incorrectArray[i]);
-  }
-  answers.push(correct);
-  // for (let i = answers.length - 1; i > 0; i--) {
-  //   const j = Math.floor(Math.random() * (i + 1));
-  //   [answers[i], answers[j]] = [answers[j], answers[i]];
-  // }
+  const [answers, setAnswers] = useState<string[]>([]);
+  useEffect(() => {
+    const tempAnswers = [...incorrectArray, correct];
+
+    for (let i = tempAnswers.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [tempAnswers[i], tempAnswers[j]] = [tempAnswers[j], tempAnswers[i]];
+    }
+
+    setAnswers(tempAnswers);
+  }, [counter]);
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     let data = e.currentTarget.textContent;
     console.log(data);
     if (data) {
       if (data === correct) {
         dispatch({ type: "INCREMENT_NILAI" });
-        setCheckBetul("benar");
+       
       } else {
-        setCheckBetul("salah");
+       
       }
     }
     dispatch({ type: 'INCREMENT' });
